@@ -11,23 +11,29 @@ $ kubectl config use-context kind-test-argocd
 It will take about 7 minutes to become Ready.
 
 ```sh
-$ kubectl create namespace argocd
-
-$ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+$ kubectl create namespace argo-cd
+$ helm repo add argo-cd https://argoproj.github.io/argo-helm
+$ helm install argo-cd argo-cd/argo-cd -n argo-cd
 ```
 
 ## access ArgoCD dashbaord by port-forward
 
 ```sh
-$ kubectl port-forward svc/argocd-server -n argocd 8080:443
+$ kubectl port-forward svc/argo-cd-argocd-server 8080:443 -n argo-cd
 ```
 
-## login
+## get login password
 
 ```sh
-$ kubectl -n argocd get secret argocd-initial-admin-secret -o go-template="{{.data.password | base64decode }}"
+$ kubectl -n argo-cd get secret argocd-initial-admin-secret -o go-template="{{.data.password | base64decode }}"
+```
 
-$ argocd login localhost:8080
+## Tutorial: Manage Argo CD Using Argo CD
+
+If you apply the manifest that is applied with the same resources name as helm install, it will take over the argocd that has already been deployed.
+
+```sh
+$ kubectl apply -f argocd-app.yaml
 ```
 
 ## Tutorial: k8s dashboard application
