@@ -28,6 +28,16 @@ $ kubectl port-forward svc/argo-cd-argocd-server 8080:443 -n argo-cd
 $ kubectl -n argo-cd get secret argocd-initial-admin-secret -o go-template="{{.data.password | base64decode }}"
 ```
 
+## login argocd cli
+
+If you wanna use ArgoCD commands, just do it.
+
+```sh
+$ argocd login localhost:8080
+Username: admin
+Password: <The password you obtained above>
+```
+
 ## Tutorial: Manage Argo CD Using Argo CD
 
 If you apply the manifest that is applied with the same resources name as helm install, it will take over the argocd that has already been deployed.
