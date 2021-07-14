@@ -11,9 +11,8 @@ $ kubectl config use-context kind-test-argocd
 It will take about 7 minutes to become Ready.
 
 ```sh
-$ kubectl create namespace argo-cd
 $ helm repo add argo-cd https://argoproj.github.io/argo-helm
-$ helm install argo-cd argo-cd/argo-cd -n argo-cd
+$ helm install argo-cd argo-cd/argo-cd -n argo-cd --create-namespace
 ```
 
 ## access ArgoCD dashbaord by port-forward
