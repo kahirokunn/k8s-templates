@@ -2,8 +2,6 @@
 
 ```sh
 $ kind create cluster --name test-argocd --config kind-cluster.yaml
-
-$ kubectl config use-context kind-test-argocd
 ```
 
 ## deploy ArgoCD
@@ -12,7 +10,7 @@ It will take about 7 minutes to become Ready.
 
 ```sh
 $ helm repo add argo-cd https://argoproj.github.io/argo-helm
-$ helm install argo-cd argo-cd/argo-cd -n argo-cd --create-namespace
+$ helm install argo-cd argo-cd/argo-cd -n argo-cd --create-namespace -f argocd-add-tanka-plugin-values.yaml
 ```
 
 ## access ArgoCD dashbaord by port-forward

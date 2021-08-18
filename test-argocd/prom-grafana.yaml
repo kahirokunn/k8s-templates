@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  # reference: https://github.com/grafana/tanka/blob/8b680de501685b534efba32a07dea408454bb73b/examples/prom-grafana/environments/prom-grafana/dev/spec.json#L9
+  name: prom-grafana-dev
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prom-grafana
+  namespace: argo-cd
+spec:
+  destination:
+    namespace: prom-grafana
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: examples/prom-grafana
+    repoURL: 'https://github.com/grafana/tanka'
+    targetRevision: HEAD
+    plugin:
+      name: tanka
+      env:
+        - name: TK_ENV
+          value: prom-grafana/dev
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true

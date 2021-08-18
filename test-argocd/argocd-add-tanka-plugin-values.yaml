@@ -1,0 +1,62 @@
+server:
+  config:
+    configManagementPlugins: |
+      - name: tanka
+        init:
+          command:
+          - sh
+          - "-c"
+          args:
+          - jb install
+        generate:
+          command:
+          - sh
+          - "-c"
+          args:
+          - tk show environments/${TK_ENV} --dangerous-allow-redirect ${EXTRA_ARGS}
+
+repoServer:
+  volumes:
+    - name: custom-tools
+      emptyDir: {}
+  initContainers:
+    - name: jb
+      image: alpine:3.8
+      command: [sh, -c]
+      args:
+        - wget https://github.com/jsonnet-bundler/jsonnet-bundler/releases/download/v0.4.0/jb-linux-amd64 &&
+          mv jb-linux-amd64 /custom-tools/jb &&
+          chmod +x /custom-tools/jb
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+    - name: tanka
+      image: alpine:3.8
+      command: [sh, -c]
+      args:
+        - wget https://github.com/grafana/tanka/releases/download/v0.17.2/tk-linux-amd64 &&
+          mv tk-linux-amd64 /custom-tools/tk &&
+          chmod +x /custom-tools/tk
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+    - name: jsonnet
+      image: alpine:3.8
+      command: [sh, -c]
+      args:
+        - wget -qO- https://github.com/google/jsonnet/releases/download/v0.17.0/jsonnet-bin-v0.17.0-linux.tar.gz | tar -xvzf - &&
+          mv jsonnet /custom-tools/jsonnet &&
+          chmod +x /custom-tools/jsonnet
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+  volumeMounts:
+    - mountPath: /usr/local/bin/jb
+      name: custom-tools
+      subPath: jb
+    - mountPath: /usr/local/bin/tk
+      name: custom-tools
+      subPath: tk
+    - mountPath: /usr/local/bin/jsonnet
+      name: custom-tools
+      subPath: jsonnet

@@ -12,8 +12,25 @@ spec:
   source:
     helm:
       releaseName: argo-cd
+      values: |-
+        server:
+          config:
+            configManagementPlugins: |
+              - name: tanka
+                init:
+                  command:
+                  - sh
+                  - "-c"
+                  args:
+                  - jb install
+                generate:
+                  command:
+                  - sh
+                  - "-c"
+                  args:
+                  - tk show environments/${TK_ENV} --dangerous-allow-redirect ${EXTRA_ARGS}
     repoURL: 'https://argoproj.github.io/argo-helm'
-    targetRevision: 3.6.10
+    targetRevision: 3.12.1
     chart: argo-cd
   project: default
   syncPolicy:
