@@ -40,7 +40,7 @@ Password: <The password you obtained above>
 If you apply the manifest that is applied with the same resources name as helm install, it will take over the argocd that has already been deployed.
 
 ```sh
-$ kubectl apply -f argocd-app.yaml
+$ jsonnet -S argocd-app.jsonnet | kubectl apply -f-
 ```
 
 ## Tutorial: k8s dashboard application
