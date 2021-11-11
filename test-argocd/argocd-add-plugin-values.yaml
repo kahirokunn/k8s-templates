@@ -14,6 +14,13 @@ server:
           - "-c"
           args:
           - tk show environments/${TK_ENV} --dangerous-allow-redirect ${EXTRA_ARGS}
+      - name: bash
+        generate:
+          command:
+          - bash
+          - "-c"
+          args:
+          - ${CODE}
 
 repoServer:
   volumes:

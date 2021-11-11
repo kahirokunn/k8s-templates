@@ -9,14 +9,20 @@ $ kind create cluster --name test-argocd --config kind-cluster.yaml
 It will take about 7 minutes to become Ready.
 
 ```sh
-$ helm repo add argo-cd https://argoproj.github.io/argo-helm
-$ helm install argo-cd argo-cd/argo-cd -n argo-cd --create-namespace -f argocd-add-tanka-plugin-values.yaml
+$ kubectl create ns argocd
+$ helm repo add argo https://argoproj.github.io/argo-helm
 ```
 
-## access ArgoCD dashbaord by port-forward
+### Use helm install
 
 ```sh
-$ kubectl port-forward svc/argo-cd-argocd-server 8080:443 -n argo-cd
+$ helm install argocd argo/argo-cd -n argocd -f argocd-add-plugin-values.yaml
+```
+
+## access ArgoCD dashboard by port-forward
+
+```sh
+$ kubectl port-forward svc/argocd-server 8080:443 -n argocd
 ```
 
 ## get login password
@@ -38,6 +44,8 @@ Password: <The password you obtained above>
 ## Tutorial: Manage Argo CD Using Argo CD
 
 If you apply the manifest that is applied with the same resources name as helm install, it will take over the argocd that has already been deployed.
+
+### Using jsonnet
 
 ```sh
 $ jsonnet -S argocd-app.jsonnet | kubectl apply -f-

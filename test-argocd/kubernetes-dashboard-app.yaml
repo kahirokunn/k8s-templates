@@ -32,7 +32,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kubernetes-dashboard
-  namespace: argo-cd
+  namespace: argocd
 spec:
   project: default
   source:

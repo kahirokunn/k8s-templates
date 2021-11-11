@@ -3,23 +3,23 @@ std.manifestYamlDoc({
   kind: 'Application',
   metadata: {
     name: 'argocd',
-    namespace: 'argo-cd',
+    namespace: 'argocd',
     finalizers: [
       'resources-finalizer.argocd.argoproj.io'
     ]
   },
   spec: {
     destination: {
-      namespace: 'argo-cd',
+      namespace: 'argocd',
       server: 'https://kubernetes.default.svc'
     },
     source: {
       helm: {
-        releaseName: 'argo-cd',
-        values: importstr './argocd-add-tanka-plugin-values.yaml'
+        releaseName: 'argocd',
+        values: importstr './argocd-add-plugin-values.yaml'
       },
       repoURL: 'https://argoproj.github.io/argo-helm',
-      targetRevision: '3.12.1',
+      targetRevision: '3.26.7',
       chart: 'argo-cd'
     },
     project: 'default',
