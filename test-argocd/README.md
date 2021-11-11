@@ -11,12 +11,7 @@ It will take about 7 minutes to become Ready.
 ```sh
 $ kubectl create ns argocd
 $ helm repo add argo https://argoproj.github.io/argo-helm
-```
-
-### Use helm install
-
-```sh
-$ helm install argocd argo/argo-cd -n argocd -f argocd-add-plugin-values.yaml
+$ helm install argocd argo/argo-cd -n argocd -f argocd-app/argocd-add-plugin-values.yaml
 ```
 
 ## access ArgoCD dashboard by port-forward
@@ -39,16 +34,6 @@ If you wanna use ArgoCD commands, just do it.
 $ argocd login localhost:8080
 Username: admin
 Password: <The password you obtained above>
-```
-
-## Tutorial: Manage Argo CD Using Argo CD
-
-If you apply the manifest that is applied with the same resources name as helm install, it will take over the argocd that has already been deployed.
-
-### Using jsonnet
-
-```sh
-$ jsonnet -S argocd-app.jsonnet | kubectl apply -f-
 ```
 
 ## Tutorial: k8s dashboard application

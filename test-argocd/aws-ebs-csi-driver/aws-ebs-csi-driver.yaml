@@ -1,0 +1,123 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: csi-snapshotter-crds
+  namespace: argocd
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: client/config/crd
+    repoURL: 'https://github.com/kubernetes-csi/external-snapshotter'
+    targetRevision: v4.2.1
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: csi-snapshotter-controller
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: kube-system
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: deploy/kubernetes/snapshot-controller
+    repoURL: 'https://github.com/kubernetes-csi/external-snapshotter'
+    targetRevision: v4.2.1
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-ebs-csi-driver
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: kube-system
+    server: 'https://kubernetes.default.svc'
+  source:
+    repoURL: 'https://kubernetes-sigs.github.io/aws-ebs-csi-driver'
+    targetRevision: 2.4.0
+    chart: aws-ebs-csi-driver
+    helm:
+      values: |
+        controller:
+          serviceAccount:
+            create: false
+          extraVolumeTags:
+            Automation: k8s
+            Service: sample-app
+            AWSResourceRepo: argocd
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-aws-vsc
+  # https://velero.io/docs/v1.7/csi/#installing-velero-with-csi-support#implementation-choices
+  labels:
+    velero.io/csi-volumesnapshot-class: "true"
+driver: ebs.csi.aws.com
+deletionPolicy: Delete
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ebs-csi-gp2
+parameters:
+  fsType: ext4
+  type: gp2
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ebs-csi-slow
+parameters:
+  type: pd-standard
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ebs-csi-st1
+parameters:
+  fsType: xfs
+  type: st1
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ebs-csi-io1
+parameters:
+  fsType: ext4
+  type: io1
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
