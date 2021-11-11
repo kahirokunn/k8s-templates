@@ -1,7 +1,7 @@
 ## create k8s cluster by kind
 
 ```sh
-$ kind create cluster --name test-argocd --config kind-cluster.yaml
+$ kind create cluster --name argocd --config kind-minimum-cluster.yaml
 ```
 
 ## deploy ArgoCD
@@ -34,14 +34,6 @@ If you wanna use ArgoCD commands, just do it.
 $ argocd login localhost:8080
 Username: admin
 Password: <The password you obtained above>
-```
-
-## Tutorial: k8s dashboard application
-
-deploy
-
-```sh
-$ kubectl apply -f kubernetes-dashboard-app.yaml
 ```
 
 ## Tutorial: prometheus-stack application
