@@ -1,20 +1,24 @@
-local privateSubnets = import "./private_subnets.json";
-local publicSubnets = import "./public_subnets.json";
-local cluster_name = "practice-eks";
+local subnets = import "./eks_subnets.json";
+local publicSubnets = subnets[0].public;
+local privateSubnets = subnets[0].private;
+
+local config = import "../config.json";
 
 local commonTags = {
-  "Automation": "eksctl",
+  "Hello": "k8s_world",
 };
 
-local nodegroupTags = {
+local getClusterName(i) = config.base_cluster_name + "-" + i;
+
+local nodegroupTags(i) = {
   "nodegroup-role": "worker",
   "k8s.io/cluster-autoscaler/enabled": "true",
-  ["k8s.io/cluster-autoscaler/" + cluster_name]: "owned",
+  ["k8s.io/cluster-autoscaler/" + getClusterName(i)]: "owned",
 } + commonTags;
 
 local desiredCapacity = (std.length(privateSubnets) + std.length(publicSubnets)) * 2;
 
-local nodegroup(az, instanceType, desiredCapacity, type) = {
+local nodegroup(i, az, instanceType, desiredCapacity, type) = {
   name: 'managed-' + std.strReplace(instanceType, '.', '-') + '-' + az + '-' + type,
   instanceType: instanceType,
   availabilityZones: [az],
@@ -27,35 +31,52 @@ local nodegroup(az, instanceType, desiredCapacity, type) = {
   labels: {
     role: "worker"
   },
-  tags: nodegroupTags + {
+  tags: nodegroupTags(i) + {
     type: type
   },
 };
 
-if std.length(privateSubnets) == 0 || std.length(publicSubnets) == 0 then
-  error 'required private subnets and public subnets.'
-else
-  std.manifestYamlDoc({
+local generateClusterConfig(i, publicSubnets, privateSubnets) = {
     apiVersion: 'eksctl.io/v1alpha5',
     kind: 'ClusterConfig',
     metadata: {
-      name: cluster_name,
-      region: 'ap-northeast-1',
-      version: '1.20',
+      name: getClusterName(i),
+      region: config.region,
+      version: '1.21',
     },
     iam: {
       withOIDC: true,
       serviceAccounts: [
         {
           metadata: {
-            name: 'aws-load-balancer-controller',
-            namespace: 'kube-system',
+            name: "cluster-autoscaler",
+            namespace: "kube-system",
+          },
+          wellKnownPolicies: {
+            autoScaler: true,
+          },
+          tags: commonTags,
+        },
+        {
+          metadata: {
+            name: "aws-load-balancer-controller",
+            namespace: "kube-system",
           },
           wellKnownPolicies: {
             awsLoadBalancerController: true,
           },
           tags: commonTags,
         },
+        {
+          metadata: {
+            name: 'ebs-csi-controller-sa',
+            namespace: 'kube-system',
+          },
+          wellKnownPolicies: {
+            ebsCSIController: true,
+          },
+          tags: commonTags,
+        }
       ],
     },
     vpc: {
@@ -75,11 +96,11 @@ else
       },
     },
     nodeGroups: [
-      nodegroup(s.az, 't3.medium', 2, 'private')
+      nodegroup(i, s.az, 't3.medium', 2, 'private')
       for s in privateSubnets
     ] + [
       // 必要になったらauto scalerに作ってもらうので、最初は0で作成します
-      nodegroup(s.az, 't3.medium', 0, 'public')
+      nodegroup(i, s.az, 't3.medium', 0, 'public')
       for s in publicSubnets
     ],
     addons: [{
@@ -109,4 +130,9 @@ else
       },
       tags: commonTags,
     }]
-  })
+  };
+
+if std.length(privateSubnets) == 0 || std.length(publicSubnets) == 0 then
+  error 'required private subnets and public subnets.'
+else
+  std.mapWithIndex(function(i, subnets) std.manifestYamlDoc(generateClusterConfig(i, subnets.public, subnets.private)), subnets)[config.current_index]

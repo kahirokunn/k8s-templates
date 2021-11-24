@@ -1,28 +1,25 @@
 provider "aws" {}
 
 locals {
-  cluster_name = "practice-eks"
-  vpc_name = "practice-eks"
+  config = jsondecode(file("${path.module}/../../../config.json"))
 }
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.2.0"
+  version = "3.11.0"
 
-  name = local.vpc_name
-  cidr = "10.0.0.0/16"
+  name = local.config.vpc_name
+  cidr = local.config.vpc_cidr
 
-  azs             = ["ap-northeast-1a", "ap-northeast-1c"]
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+  azs             = local.config.azs
+  private_subnets = local.config.private_subnets
+  public_subnets  = local.config.public_subnets
 
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
 
-  tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-  }
+  tags = {for i in range(local.config.eks_max_cluster_number) : "kubernetes.io/cluster/${local.config.base_cluster_name}-${i}" => "shared"}
 
   public_subnet_tags = {
     "kubernetes.io/role/elb" = "1"
