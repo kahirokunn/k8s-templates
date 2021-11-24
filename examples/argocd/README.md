@@ -9,9 +9,9 @@ $ kind create cluster --name argocd --config kind-minimum-cluster.yaml
 It will take about 7 minutes to become Ready.
 
 ```sh
-$ kubectl create ns argocd
 $ helm repo add argo https://argoproj.github.io/argo-helm
-$ helm install argocd argo/argo-cd -n argocd -f argocd-app/argocd-add-plugin-values.yaml
+$ helm repo update
+$ helm install argocd argo/argo-cd -n argocd --create-namespace -f argocd-app/argocd-add-plugin-values.yaml
 ```
 
 ## access ArgoCD dashboard by port-forward
