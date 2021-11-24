@@ -71,4 +71,8 @@ token.txt
 .envrc*
 eks/private_subnets.json
 eks/public_subnets.json
+eks/vpc_subnets.json
+eks/eks_subnets.json
 .terraform.lock.hcl
+aws-credentials-velero
+config.json
