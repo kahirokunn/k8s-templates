@@ -1,7 +1,9 @@
-provider "aws" {}
-
 locals {
   config = jsondecode(file("${path.module}/../../../config.json"))
+}
+
+provider "aws" {
+  region = local.config.region
 }
 
 module "vpc" {
