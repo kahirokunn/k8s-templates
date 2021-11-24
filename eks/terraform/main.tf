@@ -1,5 +1,5 @@
 locals {
-  config = jsondecode(file("${path.module}/../../../config.json"))
+  config = jsondecode(file("${path.module}/../../config.json"))
 }
 
 provider "aws" {
