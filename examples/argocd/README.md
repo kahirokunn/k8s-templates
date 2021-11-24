@@ -23,7 +23,7 @@ $ kubectl port-forward svc/argocd-server 8080:443 -n argocd
 ## get login password
 
 ```sh
-$ kubectl -n argo-cd get secret argocd-initial-admin-secret -o go-template="{{.data.password | base64decode }}"
+$ kubectl -n argocd get secret argocd-initial-admin-secret -o go-template="{{.data.password | base64decode }}"
 ```
 
 ## login argocd cli
