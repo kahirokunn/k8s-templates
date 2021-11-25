@@ -37,3 +37,9 @@ $ argocd login localhost:8080
 Username: admin
 Password: <The password you obtained above>
 ```
+
+## delete k8s cluster by kind
+
+```sh
+$ kind delete cluster --name argocd
+```
