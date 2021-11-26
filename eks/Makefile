@@ -6,7 +6,7 @@ REGION := $(shell cat ../config.json | jq '.region' --raw-output)
 AWS_PROFILE := $(shell cat ../config.json | jq '.aws_profile' --raw-output)
 FULL_CLUSTER_NAME=${BASE_CLUSTER_NAME}-${CURRENT_INDEX}
 
-whoiam:
+whoami:
 	aws sts get-caller-identity
 
 prepare:
