@@ -25,7 +25,7 @@ replace-irsa:
 	jsonnet -S ./cluster-spec.jsonnet | eksctl delete iamserviceaccount --approve -f -
 	jsonnet -S ./cluster-spec.jsonnet | eksctl create iamserviceaccount --override-existing-serviceaccounts --approve -f -
 
-up:
+up: prepare eks
 
 down:
 	jsonnet -S ./cluster-spec.jsonnet | eksctl delete cluster -f -
