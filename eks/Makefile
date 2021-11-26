@@ -5,6 +5,9 @@ REGION := $(shell cat ../config.json | jq '.region' --raw-output)
 FULL_CLUSTER_NAME=${BASE_CLUSTER_NAME}-${CURRENT_INDEX}
 AWS_PROFILE=default
 
+whoiam:
+	aws sts get-caller-identity
+
 prepare:
 	./export_vpc_subnet_json.sh
 	./separate_eks_subnets_json.js > eks_subnets.json
