@@ -1,3 +1,4 @@
+export
 BASE_CLUSTER_NAME := $(shell cat ../config.json | jq '.base_cluster_name' --raw-output)
 CURRENT_INDEX := $(shell cat ../config.json | jq '.current_index' --raw-output)
 AWS_ACCOUNT_ID := $(shell cat ../config.json | jq '.aws_account_id' --raw-output)
@@ -24,7 +25,7 @@ replace-irsa:
 	jsonnet -S ./cluster-spec.jsonnet | eksctl delete iamserviceaccount --approve -f -
 	jsonnet -S ./cluster-spec.jsonnet | eksctl create iamserviceaccount --override-existing-serviceaccounts --approve -f -
 
-up: prepare eks
+up:
 
 down:
 	jsonnet -S ./cluster-spec.jsonnet | eksctl delete cluster -f -
