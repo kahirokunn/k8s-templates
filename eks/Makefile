@@ -29,6 +29,3 @@ up:
 
 down:
 	jsonnet -S ./cluster-spec.jsonnet | eksctl delete cluster -f -
-
-config:
-	aws eks --region ${REGION} update-kubeconfig --name ${FULL_CLUSTER_NAME}
