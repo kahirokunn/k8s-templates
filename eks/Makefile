@@ -22,10 +22,10 @@ config:
 	aws eks --region ${REGION} update-kubeconfig --name ${FULL_CLUSTER_NAME}
 
 replace-irsa:
-	jsonnet -S ./cluster-spec.jsonnet | eksctl delete iamserviceaccount --approve -f -
+	jsonnet -S ./cluster-spec.jsonnet | eksctl delete iamserviceaccount --wait --approve -f -
 	jsonnet -S ./cluster-spec.jsonnet | eksctl create iamserviceaccount --override-existing-serviceaccounts --approve -f -
 
 up: prepare eks
 
 down:
-	jsonnet -S ./cluster-spec.jsonnet | eksctl delete cluster -f -
+	jsonnet -S ./cluster-spec.jsonnet | eksctl delete cluster --wait -f -
