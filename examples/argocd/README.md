@@ -11,7 +11,7 @@ It will take about 7 minutes to become Ready.
 ```sh
 $ helm repo add argo https://argoproj.github.io/argo-helm
 $ helm repo update
-$ helm install argocd argo/argo-cd -n argocd --create-namespace -f argocd-app/argocd-add-plugin-values.yaml
+$ helm install argocd argo/argo-cd -n argocd --wait --create-namespace -f argocd-app/argocd-add-plugin-values.yaml
 ```
 
 ## access ArgoCD dashboard by port-forward
