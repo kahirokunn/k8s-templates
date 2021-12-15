@@ -27,7 +27,7 @@ eks:
 	jsonnet -S ./cluster-spec.jsonnet | eksctl create cluster -f -
 	aws eks --region ${REGION} update-kubeconfig --name ${FULL_CLUSTER_NAME}
 
-config:
+update-kubeconfig:
 	aws eks --region ${REGION} update-kubeconfig --name ${FULL_CLUSTER_NAME}
 
 replace-irsa:
