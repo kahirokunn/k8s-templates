@@ -7,8 +7,7 @@ tfenvを利用している方は`$ tfenv use <version>`してterraformを使え�
 ### 1. create VPC and Subnets
 
 ```sh
-$ terraform -chdir=./terraform init
-$ terraform -chdir=./terraform apply
+$ make terraform-apply
 ```
 
 ### 2. create EKS Cluster
@@ -28,5 +27,5 @@ $ make down
 ## 2. destroy VPC and Subnets
 
 ```sh
-$ terraform -chdir=./terraform destroy
+$ make terraform-destroy
 ```

@@ -6,6 +6,15 @@ REGION := $(shell cat ../config.json | jq '.region' --raw-output)
 AWS_PROFILE := $(shell cat ../config.json | jq '.aws_profile' --raw-output)
 FULL_CLUSTER_NAME=${BASE_CLUSTER_NAME}-${CURRENT_INDEX}
 
+terraform-init:
+	terraform -chdir=./terraform init
+
+terraform-apply: whoami terraform-init
+	terraform -chdir=./terraform apply
+
+terraform-destroy: 
+	terraform -chdir=./terraform destroy
+
 whoami:
 	aws sts get-caller-identity
 
@@ -29,3 +38,7 @@ up: prepare eks
 
 down:
 	jsonnet -S ./cluster-spec.jsonnet | eksctl delete cluster --wait -f -
+
+all: terraform-apply up
+
+delete-all: down terraform-destroy
